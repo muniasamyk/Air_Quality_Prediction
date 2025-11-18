@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air Quality Prediction</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0d0d0d;
+            color: white;
+        }
+
+        .container {
+            width: 700px;
+            margin: 40px auto;
+            padding: 30px;
+            background: #1a1a1a;
+            border-radius: 14px;
+            box-shadow: 0 0 22px rgba(255, 255, 255, 0.12);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        /* GRID ALIGNMENTS */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background: #2b2b2b;
+            color: white;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: purple;
+            color: white;
+            font-size: 17px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 14px;
+            background: black;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 19px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Air Quality Prediction</h2>
+
+        <div class="grid">
+    <div>
+        <label>CO(GT)</label>
+        <input id="CO(GT)" type="number">
+    </div>
+
+    <div>
+        <label>PT08.S1(CO)</label>
+        <input id="PT08.S1(CO)" type="number">
+    </div>
+
+    <div>
+        <label>NMHC(GT)</label>
+        <input id="NMHC(GT)" type="number">
+    </div>
+
+    <div>
+        <label>PT08.S2(NMHC)</label>
+        <input id="PT08.S2(NMHC)" type="number">
+    </div>
+
+    <div>
+        <label>NOx(GT)</label>
+        <input id="NOx(GT)" type="number">
+    </div>
+
+    <div>
+        <label>PT08.S3(NOx)</label>
+        <input id="PT08.S3(NOx)" type="number">
+    </div>
+
+    <div>
+        <label>NO2(GT)</label>
+        <input id="NO2(GT)" type="number">
+    </div>
+
+    <div>
+        <label>PT08.S4(NO2)</label>
+        <input id="PT08.S4(NO2)" type="number">
+    </div>
+
+    <div>
+        <label>PT08.S5(O3)</label>
+        <input id="PT08.S5(O3)" type="number">
+    </div>
+
+    <div>
+        <label>T</label>
+        <input id="T" type="number">
+    </div>
+
+    <div>
+        <label>RH</label>
+        <input id="RH" type="number">
+    </div>
+
+    <div>
+        <label>AH</label>
+        <input id="AH" type="number">
+    </div>
+</div>
+
+
+        <button onclick="getPrediction()">Predict Result</button>
+
+        <div id="result">Result will appear here</div>
+    </div>
+
+    <script>
+       async function getPrediction() {
+
+    const now = new Date();
+    const Hour = now.getHours();
+    const Day = now.getDate();
+    const Month = now.getMonth() + 1;
+
+    const inputs = {
+        "CO(GT)": parseFloat(document.getElementById("CO(GT)").value),
+        "PT08.S1(CO)": parseFloat(document.getElementById("PT08.S1(CO)").value),
+        "NMHC(GT)": parseFloat(document.getElementById("NMHC(GT)").value),
+        "PT08.S2(NMHC)": parseFloat(document.getElementById("PT08.S2(NMHC)").value),
+        "NOx(GT)": parseFloat(document.getElementById("NOx(GT)").value),
+        "PT08.S3(NOx)": parseFloat(document.getElementById("PT08.S3(NOx)").value),
+        "NO2(GT)": parseFloat(document.getElementById("NO2(GT)").value),
+        "PT08.S4(NO2)": parseFloat(document.getElementById("PT08.S4(NO2)").value),
+        "PT08.S5(O3)": parseFloat(document.getElementById("PT08.S5(O3)").value),
+        "T": parseFloat(document.getElementById("T").value),
+        "RH": parseFloat(document.getElementById("RH").value),
+        "AH": parseFloat(document.getElementById("AH").value),
+        "Hour": Hour,
+        "Day": Day,
+        "Month": Month
+    };
+
+    const response = await fetch("http://127.0.0.1:5000/predict", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(inputs)
+    });
+
+    const data = await response.json();
+
+    document.getElementById("result").innerHTML =
+        "Predicted Benzene Level (C6H6): <b>" + data.prediction.toFixed(3) + "</b>";
+}
+
+    </script>
+
+</body>
+</html>

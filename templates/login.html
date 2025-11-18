@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login / Signup</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        height: 100vh;
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: radial-gradient(circle at 20% 20%, #2a2a2a, #0d0d0d);
+        overflow: hidden;
+    }
+
+    /* 3D floating circles */
+    .circle {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(90px);
+        opacity: 0.4;
+        animation: float 10s infinite alternate ease-in-out;
+    }
+
+    .c1 { width: 300px; height: 300px; background: #444; top: -50px; left: -50px; }
+    .c2 { width: 350px; height: 350px; background: #1a1a1a; bottom: -70px; right: -70px; }
+
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        100% { transform: translateY(40px); }
+    }
+
+    .container {
+        width: 400px;
+        padding: 30px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(15px);
+        box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
+        z-index: 2;
+        animation: popup 0.7s ease;
+    }
+
+    @keyframes popup {
+        from { transform: scale(0.8); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+
+    h2 {
+        text-align: center;
+        color: white;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    .input-box {
+        margin-bottom: 18px;
+    }
+
+    label {
+        display: block;
+        color: #ccc;
+        font-size: 14px;
+        margin-bottom: 6px;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        border: none;
+        outline: none;
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff;
+        font-size: 15px;
+    }
+
+    input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        background: #1f1f1f;
+        color: white;
+        font-size: 16px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 10px;
+    }
+
+    button:hover {
+        background: #000;
+    }
+
+    .toggle-text {
+        text-align: center;
+        margin-top: 15px;
+        color: #ddd;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .toggle-text:hover {
+        color: white;
+    }
+
+    .hidden {
+        display: none;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="circle c1"></div>
+<div class="circle c2"></div>
+
+<div class="container">
+
+    <!-- Login Form -->
+    <div id="loginForm">
+        <h2>Login</h2>
+
+        <div class="input-box">
+            <label>Email</label>
+            <input type="email" id="loginEmail" required>
+        </div>
+
+        <div class="input-box">
+            <label>Password</label>
+            <input type="password" id="loginPass" required>
+        </div>
+
+        <button onclick="handleLogin(event)">Login</button>
+
+        <p class="toggle-text" onclick="showSignup()">Don't have an account? Signup</p>
+    </div>
+
+    <!-- Signup Form -->
+    <div id="signupForm" class="hidden">
+        <h2>Signup</h2>
+
+        <div class="input-box">
+            <label>Name</label>
+            <input type="text" id="signName" required>
+        </div>
+
+        <div class="input-box">
+            <label>Email</label>
+            <input type="email" id="signEmail" required>
+        </div>
+
+        <div class="input-box">
+            <label>Password</label>
+            <input type="password" id="signPass" required>
+        </div>
+
+        <button onclick="handleSignup(event)">Register</button>
+
+        <p class="toggle-text" onclick="showLogin()">Already have an account? Login</p>
+    </div>
+
+</div>
+
+<script>
+
+    function showSignup() {
+        document.getElementById("loginForm").classList.add("hidden");
+        document.getElementById("signupForm").classList.remove("hidden");
+    }
+
+    function showLogin() {
+        document.getElementById("signupForm").classList.add("hidden");
+        document.getElementById("loginForm").classList.remove("hidden");
+    }
+
+    // ------------ SIGNUP ------------
+    function handleSignup(event) {
+        event.preventDefault();
+
+        let name = document.getElementById("signName").value;
+        let email = document.getElementById("signEmail").value;
+        let pass = document.getElementById("signPass").value;
+
+        // Save to localStorage
+        let userData = {
+            name: name,
+            email: email,
+            password: pass
+        };
+
+        localStorage.setItem("userData", JSON.stringify(userData));
+
+        alert("🎉 Registration successful! Welcome " + name);
+
+        // Clear inputs
+        document.getElementById("signName").value = "";
+        document.getElementById("signEmail").value = "";
+        document.getElementById("signPass").value = "";
+
+        showLogin();
+    }
+
+    // ------------ LOGIN ------------
+    function handleLogin(event) {
+        event.preventDefault();
+
+        let email = document.getElementById("loginEmail").value;
+        let pass = document.getElementById("loginPass").value;
+
+        // Get data from localStorage
+        let storedUser = JSON.parse(localStorage.getItem("userData"));
+
+        if (!storedUser) {
+            alert("⚠ No user found! Please signup first.");
+            return;
+        }
+
+        if (email === storedUser.email && pass === storedUser.password) {
+            alert("✔ Login Successful! Welcome back " + storedUser.name);
+
+            window.location.href = "/home"; // redirect
+        } else {
+            alert("❌ Wrong Password or Email!");
+        }
+    }
+
+</script>
+
+
+</body>
+</html>
