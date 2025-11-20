@@ -10,7 +10,6 @@ MODEL_PATH = "air_quality_model.pkl"
 
 # Model Loading Function for Flask App
 def load_model():
-    """Loads the trained model from a file."""
     try:
         # joblib is used for saving/loading scikit-learn objects
         model = joblib.load(MODEL_PATH)
@@ -35,7 +34,6 @@ def predict_quality(model, input_data: np.ndarray):
 # Training and Saving Logic 
 
 def train_and_save_model():
-    """Performs data cleaning, training, evaluation, and saves the model."""
     print("--- Starting Model Training Process ---")
     
     try:
